@@ -1,6 +1,5 @@
 #!/usr/bin/env raku
 
-use     Data::Dump::Tree;
 use     Hypervisor::IBM::POWER::HMC::REST::Config::Options;
 need    Hypervisor::IBM::POWER::HMC::REST::HMC;
 
