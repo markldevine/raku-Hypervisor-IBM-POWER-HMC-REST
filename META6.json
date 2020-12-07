@@ -2,8 +2,19 @@
     "auth":         "github:markldevine",
     "authors":      [ "Mark Devine <mark@markdevine.com>" ],
     "depends":      [
-
-
+        "Hypervisor::IBM::POWER::HMC::REST::Atom",
+        "Hypervisor::IBM::POWER::HMC::REST::Cluster",
+        "Hypervisor::IBM::POWER::HMC::REST::Config",
+        "Hypervisor::IBM::POWER::HMC::REST::ETL",
+        "Hypervisor::IBM::POWER::HMC::REST::Events",
+        "Hypervisor::IBM::POWER::HMC::REST::Logon",
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems",
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::LogicalPartitions",
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::VirtualIOServers",
+        "Hypervisor::IBM::POWER::HMC::REST::ManagementConsole",
+        "Hypervisor::IBM::POWER::HMC::REST::Messaging",
+        "Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool",
+        "Hypervisor::IBM::POWER::HMC::REST::SystemTemplate"
     ],
     "description":  "IBM POWER HMC REST API",
     "license":      "Artistic-2.0",
