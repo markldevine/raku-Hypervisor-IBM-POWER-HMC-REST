@@ -18,19 +18,19 @@ DEPLOY
 
 hiph-git-clone
 --------------
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Atom.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Atom
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ETL.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ETL
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Logon.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Logon
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Config.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Config
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Events.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Events
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate
-git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Atom.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Atom
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ETL.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ETL
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Logon.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Logon
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Config.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Config
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Events.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Events
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST.git ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST
 
 
 hiph-deploy
