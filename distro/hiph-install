@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Atom && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ETL && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Logon && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Config && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Events && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST && zef install . && cd ~/github.com
+zef list --installed 2> /dev/null | grep Hypervisor::IBM::POWER::HMC::REST | sort
