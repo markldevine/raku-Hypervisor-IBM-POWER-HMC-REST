@@ -1,0 +1,37 @@
+#!/usr/bin/env raku
+
+use     Data::Dump::Tree;
+use     Hypervisor::IBM::POWER::HMC::REST::Config::Options;
+need    Hypervisor::IBM::POWER::HMC::REST::HMC;
+
+sub USAGE { Hypervisor::IBM::POWER::HMC::REST::Config::Options::usage(); }
+unit sub MAIN (*%options);
+
+my $mc = Hypervisor::IBM::POWER::HMC::REST::HMC.new(:options(Hypervisor::IBM::POWER::HMC::REST::Config::Options.new(|Map.new(%options.kv))));
+$mc.ManagementConsole.init;
+$mc.ManagedSystems.init;
+
+my $column = 30;
+
+$mc.config.dump.post: $mc.ManagementConsole.ManagementConsoleName, :header('Management Console'), :$column;
+$mc.config.dump.post: :header('VersionInfo'), :1shift;
+$mc.ManagementConsole.VersionInfo.dump(:$column, :1shift);
+$mc.config.dump.post: :header('IFixDetails'), :1shift;
+$mc.config.dump.post: $mc.ManagementConsole.IFixDetails, :1shift;
+for $mc.ManagedSystems.Managed-Systems-Names -> $managed-system-name {
+    $mc.config.dump.post: :header($managed-system-name);
+    $mc.config.dump.post: $mc.ManagedSystems.Managed-System-by-SystemName($managed-system-name).SystemFirmware, :header<SystemFirmware>, :1shift, :$column;
+    $mc.config.dump.post: :header('IORDevices'), :1shift;
+    for $mc.ManagedSystems.Managed-System-by-SystemName($managed-system-name).AssociatedSystemIOConfiguration.IOBuses.IOBus -> $iobus {
+        next unless $iobus.IOSlots.IOSlot.DEFINITE;
+        for $iobus.IOSlots.IOSlot.IORDevices.IORDevice -> $iordevice {
+            if $iordevice.MicroCodeVersion {
+                $mc.config.dump.post: :$column, :header($iordevice.LocationCode), :2shift;
+                $mc.config.dump.post: $iordevice.Description, :$column, :header<Description>, :3shift;
+                $mc.config.dump.post: $iordevice.MicroCodeVersion, :$column, :header<MicroCodeVersion>, :3shift;
+            }
+        }
+    }
+}
+
+=finish
