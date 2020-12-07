@@ -22,7 +22,7 @@
     "name":         "Hypervisor::IBM::POWER::HMC::REST",
     "perl":         "6.*",
     "provides":     {
-        "Hypervisor::IBM::POWER::HMC::REST::HMC": "lib/Hypervisor/IBM/POWER/HMC/REST/HMC.rakumod",
+        "Hypervisor::IBM::POWER::HMC::REST::HMC": "lib/Hypervisor/IBM/POWER/HMC/REST/HMC.rakumod"
     },
     "resources":    [],
     "source-url":   "https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST.git",
