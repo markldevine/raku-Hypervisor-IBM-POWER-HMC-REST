@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p ~/github.com
+
 if [ -d ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST ]
 then
     echo ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST exists
