@@ -11,135 +11,41 @@ TITLE
 =====
 IBM POWER HMC REST API
 
-SUBTITLE
-========
-* Management Console
+DEPLOY
+======
 
-* Managed System
+ - use this before submission to the ecosystem
 
-  * Logical Partition
+hiph-git-clone
+--------------
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Atom.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Atom
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ETL.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ETL
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Logon.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Logon
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Config.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Config
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-Events.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-Events
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate
+git clone https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST.git ~/g/raku-Hypervisor-IBM-POWER-HMC-REST
 
-Power Enterprise Pool
 
-Virtual Network Management
-
-Template Library
-
-SR-IOV
-
-Host Ethernet Adapter
-
-Virtual Storage Management
-
-Cluster
-
-Jobs
-
-Job status
-
-Events
-
-Performance and Capacity Monitoring
-
-Performance and Capacity Monitoring JSON Specification
-
-Documentation
-=============
-See the doc/ directory.
-
-ToDo
-====
-Must implement an exclusive-execution mechanism so that stashes/profiles don't get smashed (root-directory)
-
-Pick up Atoms too...
-
-method init (Bool :disregard-analysis) {} for all except the first threadloop for repetitive/looped instantiations
-
-debug methods*, find efficiencies (I.e. %!analysis exists and authoritative, then don't analyze)
-
-wrap methods for HIPH_METHOD, HIPH_METHOD_PRIVATE, & HIPH_SUBMETHOD instead of explicit diags (9/14 experiments only worked on simplest role>classes - in these modules they failed; bug?)
-
-fail instead of die, catch the note()/diag(), fatal in Config
-
-etl-node-name-check: what about when code expects a single instance under '*Choice' or plural types, but more than one are actually included?  Re-write into arrays of objects...
-has     Hypervisor::IBM::POWER::HMC::ManagedSystems::ManagedSystem::VirtualIOServers::VirtualIOServer::VirtualFibreChannelMappings::VirtualFibreChannelMapping @.VirtualFibreChannelMapping;
-    *** should all be changed to ***
-has     Hypervisor::IBM::POWER::HMC::ManagedSystems::ManagedSystem::VirtualIOServers::VirtualIOServer::VirtualFibreChannelMappings::VirtualFibreChannelMapping @.VirtualFibreChannelMappings;
-
-TWEAK { return self unless $!xml.DEFINITE; } ?  Less risk...  Maybe report type object when expecting a DEFINITE...
-
-More subscriptions
-------------------
-    subscribe to .data (rename to .dump!)
-        - text
-        - html
-        - csv
-
-Profiling
-=========
-Each app can have their own "profile". Lazy load()s. If user commits to an explicit set of contexts,
-only load() self attributes & all relevant children in the context (not ALL children) -- should
-greatly reduce unnecessary load() activities.
-
-"--profile" creates map automatically, if doesn't exist. If profile exists (for subsequent runs),
-$*PROGRAM-NAME.IO.absolute & $*PROGRAM-NAME.IO.m is the same, use it if '--profile' switch set.
-
-To intercept an attribute's get_value, check if we're profiling, report to profile map if True, use this mechanism:
-
-```raku
-#!/usr/bin/env raku
-multi trait_mod:<is> (Attribute:D $a, :$xmlattr!) {
-    return      unless %*ENV<HIPH_PROFILING>;
-    my $mname   = $a.name.substr(2);
-#   my &method  = my method { my \val = $a.get_value(self); val; };
-    my &method  = my method {
-        self.config.profile-update(self.^name);
-        $a.get_value(self);
-    }
-    &method.set_name($mname);
-    $a.package.^add_method($mname, &method);
-}
-class System {
-    has Str $.SerialNumber is xmlattr;
-    has Bool $.on = False;
-}
-say System.new(:SerialNumber('ABCDEFG')).SerialNumber;
-```
-
-I.e.  SRIOV only needs:
-
->    .ManagedSystems
-
->      .ManagedSystem
-
->       .AssociatedSystemIOConfiguration
-
->         .SRIOVAdapters
-
->           .IOAdapterChoice
-
->             .IOAdapterChoice
-
->               .SRIOVAdapter
-
->                 .ConvergedEthernetPhysicalPorts
-
->                   .SRIOVConvergedNetworkAdapterPhysicalPort
-
-#   when optimized
-#       - prohibit any configuration changes (options)
-#           --unconfig is allowed
-#           --profile is allowed, in which case profiling is performed anew
-#       - isolate hmc/userid (menu, if multiple hmcs/userids)
-#       - diagnostics are turned off
-#       - file outputs are reviewed
-#           --dump-csv      # DUMP-CSV-receive
-#           --dump-html     # DUMP-HTML-receive
-#           --dump-text     # DUMP-TEXT-receive
-#       - formatting options are reviewed
-#           --headers
-#           --tab-stop
-#           --quiet         # might want outputs for various dump subscriptions!
-#           --silence       # might want outputs for various dump subscriptions!
-#           --verbose       # might want outputs for various dump subscriptions!
-
+hiph-deploy
+-----------
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Atom && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ETL && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Logon && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Config && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Cluster && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-Events && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-VirtualIOServers && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-LogicalPartitions && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-ManagementConsole && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-PowerEnterprisePool && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST-SystemTemplate && zef install . && \
+cd ~/github.com/raku-Hypervisor-IBM-POWER-HMC-REST && zef install . && cd ~/github.com
+zef list --installed 2> /dev/null | grep Hypervisor::IBM::POWER::HMC::REST | sort

@@ -12,7 +12,6 @@
         "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::LogicalPartitions",
         "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::VirtualIOServers",
         "Hypervisor::IBM::POWER::HMC::REST::ManagementConsole",
-        "Hypervisor::IBM::POWER::HMC::REST::Messaging",
         "Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool",
         "Hypervisor::IBM::POWER::HMC::REST::SystemTemplate"
     ],
