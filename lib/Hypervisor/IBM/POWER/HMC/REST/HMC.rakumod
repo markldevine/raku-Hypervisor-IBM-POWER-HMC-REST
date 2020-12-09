@@ -81,17 +81,79 @@ END {
 
 =finish
 
+#!/usr/bin/env raku
+
+use Data::Dump::Tree;
+use JSON::Fast;
+
+our $*ATTRIBUTE-PROFILE-PATH = 'ATTRIBUTE-get_value.json';
+our $*ATTRIBUTE-PROFILING;
+our $*ATTRIBUTE-OPTIMIZED;
+our %*ATTRIBUTE-get_value;
+
 # profiling mechanism...
-multi trait_mod:<is> (Attribute:D $a, :$xml-text-attr! (LibXML::Element $xml)) {
+
+multi trait_mod:<is> (Attribute:D $a, :$get-profiled-attribute!) {
     my $mname   = $a.name.substr(2);
-    my &method  = my method {
-        state $fetched = False;
-        return $a.get_value(self) if $fetched;
-        my $value = self.etl-text(:TAG($mname), :$xml));
-        $a.set_value(self, $value);
-        $fetched = True;
-        return $value;
+    my &method  = my method (Str $s?) {
+        if $s {
+            $a.set_value(self, $s);
+            return $s;
+        }
+        if $*ATTRIBUTE-OPTIMIZED {
+            unless %*ATTRIBUTE-get_value{self.^name}{$a.name.substr(2)}:exists {
+                $*ATTRIBUTE-PROFILE-PATH.IO.unlink;
+                die 'Process has been previously optimized, but profile is now stale. Restart and optionally re-profile.';
+            }
+        }
+        else {
+            %*ATTRIBUTE-get_value{self.^name}{$a.name.substr(2)} = 1 if $*ATTRIBUTE-PROFILING;
+        }
+        return          $a.get_value(self);
     }
     &method.set_name($mname);
     $a.package.^add_method($mname, &method);
 }
+
+class TEST::CASE {
+    has $.a1 is get-profiled-attribute;
+    has $.a2 is get-profiled-attribute;
+}
+
+sub MAIN (Bool :$optimize) {
+
+    if $optimize {
+        $*ATTRIBUTE-PROFILE-PATH.IO.unlink if $*ATTRIBUTE-PROFILE-PATH.IO.e;
+        $*ATTRIBUTE-PROFILING = True;
+        $*ATTRIBUTE-OPTIMIZED = False;
+    }
+    else {
+        if $*ATTRIBUTE-PROFILE-PATH.IO.e {
+            %*ATTRIBUTE-get_value = from-json(slurp($*ATTRIBUTE-PROFILE-PATH));
+            if %*ATTRIBUTE-get_value.elems {
+                $*ATTRIBUTE-PROFILING = False;
+                $*ATTRIBUTE-OPTIMIZED = True;
+            }
+            else {
+                $*ATTRIBUTE-PROFILE-PATH.IO.unlink;
+                $*ATTRIBUTE-PROFILING = False;
+                $*ATTRIBUTE-OPTIMIZED = False;
+            }
+        }
+        else {
+            $*ATTRIBUTE-PROFILING = False;
+            $*ATTRIBUTE-OPTIMIZED = False;
+        }
+    }
+
+    my TEST::CASE $tc .= new(a1 => 'FIRST STRING', :a2('SECOND STRING'));
+    say $tc.a1;
+    say $tc.a2;
+
+    if %*ATTRIBUTE-get_value.elems {
+        ddt %*ATTRIBUTE-get_value;
+        spurt('ATTRIBUTE-get_value.json', to-json(%*ATTRIBUTE-get_value));
+    }
+}
+
+=finish
