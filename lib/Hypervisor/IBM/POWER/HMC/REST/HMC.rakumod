@@ -44,7 +44,7 @@ method init () {
     return self             if $!initialized;
     $!options               = Hypervisor::IBM::POWER::HMC::REST::Config::Options.new without $!options;
     $!config                = Hypervisor::IBM::POWER::HMC::REST::Config.new(:$!options);
-    self.config.diag.post: self.^name ~ '::' ~ &?ROUTINE.name if %*ENV<HIPH_METHOD>;
+    self.config.diag.post:  self.^name ~ '::' ~ &?ROUTINE.name if %*ENV<HIPH_METHOD>;
     $!options               = Nil;
     $!ManagementConsole     = Hypervisor::IBM::POWER::HMC::REST::ManagementConsole.new(:$!config);
     $!ManagedSystems        = Hypervisor::IBM::POWER::HMC::REST::ManagedSystems.new(:$!config);
@@ -83,77 +83,96 @@ END {
 
 #!/usr/bin/env raku
 
-use Data::Dump::Tree;
 use JSON::Fast;
 
-our $*ATTRIBUTE-PROFILE-PATH = 'ATTRIBUTE-get_value.json';
-our $*ATTRIBUTE-PROFILING;
-our $*ATTRIBUTE-OPTIMIZED;
-our %*ATTRIBUTE-get_value;
+our              %OPTIMIZE-ATTRIBUTE-get_value          = ();
+our              $OPTIMIZE-ATTRIBUTE-get_value-PATH     = '/home/mdevine/dev/ATTRIBUTE-get_value.json';
+our              $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS  = 0;
+constant         OPTIMIZE-ATTRIBUTE-get_value-PROFILING = 1;
+constant         OPTIMIZE-ATTRIBUTE-get_value-PROFILED  = 2;
+constant         OPTIMIZE-ATTRIBUTE-get_value-UPDATED   = 4;
 
-# profiling mechanism...
-
-multi trait_mod:<is> (Attribute:D $a, :$get-profiled-attribute!) {
-    my $mname   = $a.name.substr(2);
+multi trait_mod:<is> (Attribute:D \a, :$conditional-initialization-attribute!) {
+    my $mname   = a.name.substr(2);
     my &method  = my method (Str $s?) {
         if $s {
-            $a.set_value(self, $s);
+            a.set_value(self, $s);
             return $s;
         }
-        if $*ATTRIBUTE-OPTIMIZED {
-            unless %*ATTRIBUTE-get_value{self.^name}{$a.name.substr(2)}:exists {
-                $*ATTRIBUTE-PROFILE-PATH.IO.unlink;
-                die 'Process has been previously optimized, but profile is now stale. Restart and optionally re-profile.';
+        return a.get_value(self) unless $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS & (OPTIMIZE-ATTRIBUTE-get_value-PROFILING +| OPTIMIZE-ATTRIBUTE-get_value-PROFILED);
+
+        if $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +& OPTIMIZE-ATTRIBUTE-get_value-PROFILED {
+            unless %OPTIMIZE-ATTRIBUTE-get_value{self.^name}{a.name.substr(2)}:exists {
+                $OPTIMIZE-ATTRIBUTE-get_value-PATH.IO.unlink;
+                die 'Optimization map is stale. Restart and optionally re-optimize. Exiting...';
             }
         }
-        else {
-            %*ATTRIBUTE-get_value{self.^name}{$a.name.substr(2)} = 1 if $*ATTRIBUTE-PROFILING;
+        elsif $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +& OPTIMIZE-ATTRIBUTE-get_value-PROFILING {
+            %OPTIMIZE-ATTRIBUTE-get_value{self.^name}{a.name.substr(2)} = 1;
+            $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +|= OPTIMIZE-ATTRIBUTE-get_value-UPDATED;
         }
-        return          $a.get_value(self);
+        return a.get_value(self);
     }
     &method.set_name($mname);
-    $a.package.^add_method($mname, &method);
+    a.package.^add_method($mname, &method);
+}
+
+sub slow-feed-a1 { put 'a1 loading...'; sleep 1; 'a1 VALUE' }
+sub slow-feed-a2 { put 'a2 loading...'; sleep 4; 'a2 VALUE' }
+
+sub init-check (Str:D $package!, Str:D $name!) {
+#   (1) no optimization -- return fastest
+    return True unless $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +& OPTIMIZE-ATTRIBUTE-get_value-PROFILED;
+#   (2) been profiled, return False as soon as possible
+    return False unless %OPTIMIZE-ATTRIBUTE-get_value{$package}{$name}:exists;
+#   (3) been profiled, and it's an active attribute
+    return True;
 }
 
 class TEST::CASE {
-    has $.a1 is get-profiled-attribute;
-    has $.a2 is get-profiled-attribute;
+    has $.a1 is conditional-initialization-attribute;
+    has $.a2 is conditional-initialization-attribute;
+
+    submethod TWEAK {
+        $!a1 = slow-feed-a1() if init-check(self.^name, 'a1');
+        $!a2 = slow-feed-a2() if init-check(self.^name, 'a2');
+    }
 }
 
 sub MAIN (Bool :$optimize) {
 
     if $optimize {
-        $*ATTRIBUTE-PROFILE-PATH.IO.unlink if $*ATTRIBUTE-PROFILE-PATH.IO.e;
-        $*ATTRIBUTE-PROFILING = True;
-        $*ATTRIBUTE-OPTIMIZED = False;
+        $OPTIMIZE-ATTRIBUTE-get_value-PATH.IO.unlink if $OPTIMIZE-ATTRIBUTE-get_value-PATH.IO.e;
+        $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +&= +^OPTIMIZE-ATTRIBUTE-get_value-PROFILED;
+        $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +|= OPTIMIZE-ATTRIBUTE-get_value-PROFILING;
     }
     else {
-        if $*ATTRIBUTE-PROFILE-PATH.IO.e {
-            %*ATTRIBUTE-get_value = from-json(slurp($*ATTRIBUTE-PROFILE-PATH));
-            if %*ATTRIBUTE-get_value.elems {
-                $*ATTRIBUTE-PROFILING = False;
-                $*ATTRIBUTE-OPTIMIZED = True;
+        if $OPTIMIZE-ATTRIBUTE-get_value-PATH.IO.e {
+            %OPTIMIZE-ATTRIBUTE-get_value = from-json(slurp($OPTIMIZE-ATTRIBUTE-get_value-PATH));
+            if %OPTIMIZE-ATTRIBUTE-get_value.elems {
+                $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +|= OPTIMIZE-ATTRIBUTE-get_value-PROFILED;
+                $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +&= +^OPTIMIZE-ATTRIBUTE-get_value-PROFILING;
             }
             else {
-                $*ATTRIBUTE-PROFILE-PATH.IO.unlink;
-                $*ATTRIBUTE-PROFILING = False;
-                $*ATTRIBUTE-OPTIMIZED = False;
+                $OPTIMIZE-ATTRIBUTE-get_value-PATH.IO.unlink;
+                $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +&= +^OPTIMIZE-ATTRIBUTE-get_value-PROFILED;
+                $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +&= +^OPTIMIZE-ATTRIBUTE-get_value-PROFILING;
             }
         }
         else {
-            $*ATTRIBUTE-PROFILING = False;
-            $*ATTRIBUTE-OPTIMIZED = False;
+            $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +&= +^OPTIMIZE-ATTRIBUTE-get_value-PROFILED;
+            $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +&= +^OPTIMIZE-ATTRIBUTE-get_value-PROFILING;
         }
     }
 
-    my TEST::CASE $tc .= new(a1 => 'FIRST STRING', :a2('SECOND STRING'));
+    my TEST::CASE $tc .= new;
     say $tc.a1;
-    say $tc.a2;
+#   say $tc.a2;
 
-    if %*ATTRIBUTE-get_value.elems {
-        ddt %*ATTRIBUTE-get_value;
-        spurt('ATTRIBUTE-get_value.json', to-json(%*ATTRIBUTE-get_value));
-    }
 }
 
-=finish
+END {
+    if $OPTIMIZE-ATTRIBUTE-get_value-ACTIONS +& OPTIMIZE-ATTRIBUTE-get_value-UPDATED {
+        spurt('ATTRIBUTE-get_value.json', to-json(%OPTIMIZE-ATTRIBUTE-get_value));
+    }
+}
