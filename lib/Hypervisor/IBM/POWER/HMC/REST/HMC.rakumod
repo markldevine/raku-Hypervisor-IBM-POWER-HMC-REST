@@ -14,19 +14,19 @@ unit    class Hypervisor::IBM::POWER::HMC::REST::HMC:api<1>:auth<Mark Devine (ma
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
             does Hypervisor::IBM::POWER::HMC::REST::Config::Optimize;
 
-my      Bool                                                $analyzed = False;
-my      Lock                                                $lock = Lock.new;
+my      Bool                                                    $analyzed = False;
+my      Lock                                                    $lock = Lock.new;
 
-has     Hypervisor::IBM::POWER::HMC::REST::Config                 $.config;
-has     Bool                                                $.loaded = False;
-has     Bool                                                $.initialized = False;
-has     Hypervisor::IBM::POWER::HMC::REST::Config::Options        $.options;
-has     Hypervisor::IBM::POWER::HMC::REST::ManagementConsole      $.ManagementConsole;
-has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems         $.ManagedSystems;
-#has     Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool    $.PowerEnterprisePool;
-has     Hypervisor::IBM::POWER::HMC::REST::SystemTemplate         $.SystemTemplate;
-#has     Hypervisor::IBM::POWER::HMC::REST::Cluster                $.Cluster;
-has     Hypervisor::IBM::POWER::HMC::REST::Events                 $.Events;
+has     Hypervisor::IBM::POWER::HMC::REST::Config               $.config;
+has     Bool                                                    $.loaded = False;
+has     Bool                                                    $.initialized = False;
+has     Hypervisor::IBM::POWER::HMC::REST::Config::Options      $.options;
+has     Hypervisor::IBM::POWER::HMC::REST::ManagementConsole    $.ManagementConsole;
+has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems       $.ManagedSystems;
+#has     Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool  $.PowerEnterprisePool;
+has     Hypervisor::IBM::POWER::HMC::REST::SystemTemplate       $.SystemTemplate;
+#has     Hypervisor::IBM::POWER::HMC::REST::Cluster              $.Cluster;
+has     Hypervisor::IBM::POWER::HMC::REST::Events               $.Events;
 
 submethod TWEAK {
     %*ENV<PID-PATH>             = '';
@@ -68,6 +68,16 @@ method load () {
     $!ManagedSystems.load;
     $!loaded    = True;
     self;
+}
+
+END {
+    self.config.optimizations.stash;
+    if %*ENV<PID-PATH>:exists {
+        if %*ENV<PID-PATH>.IO.f {
+            note .exception.message without %*ENV<PID-PATH>.IO.unlink;
+        }
+        %*ENV<PID-PATH>:delete;
+    }
 }
 
 =finish
