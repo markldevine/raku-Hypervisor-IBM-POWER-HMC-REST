@@ -67,11 +67,11 @@ method load () {
     $!ManagementConsole.load;
     $!ManagedSystems.load;
     $!loaded    = True;
+    self.config.optimizations.stash;
     self;
 }
 
 END {
-    self.config.optimizations.stash;
     if %*ENV<PID-PATH>:exists {
         if %*ENV<PID-PATH>.IO.f {
             note .exception.message without %*ENV<PID-PATH>.IO.unlink;
