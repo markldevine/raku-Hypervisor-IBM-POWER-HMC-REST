@@ -29,3 +29,13 @@ raku-Hypervisor-IBM-POWER-HMC-REST/distro/hiph-clone
 hiph-install
 -----------
 raku-Hypervisor-IBM-POWER-HMC-REST/distro/hiph-install
+
+Note
+====
+
+API users must .init() whatever major branches they require:
+
+ - ManagementConsole.init()
+ - ManagedSystems.init()
+   - ManagedSystems.LogicalVolumes.init()
+   - ManagedSystems.VirtualIOServers.init()
