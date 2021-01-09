@@ -3,12 +3,12 @@ need    Hypervisor::IBM::POWER::HMC::REST::Config::Analyze;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Dump;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Options;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagementConsole;
-need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems;
+#need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems;
 #need    Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool;
 #
-need    Hypervisor::IBM::POWER::HMC::REST::SystemTemplate;
+#need    Hypervisor::IBM::POWER::HMC::REST::SystemTemplate;
 #need    Hypervisor::IBM::POWER::HMC::REST::Cluster;
-need    Hypervisor::IBM::POWER::HMC::REST::Events;
+#need    Hypervisor::IBM::POWER::HMC::REST::Events;
 unit    class Hypervisor::IBM::POWER::HMC::REST::HMC:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -22,11 +22,11 @@ has     Bool                                                    $.loaded = False
 has     Bool                                                    $.initialized = False;
 has     Hypervisor::IBM::POWER::HMC::REST::Config::Options      $.options;
 has     Hypervisor::IBM::POWER::HMC::REST::ManagementConsole    $.ManagementConsole;
-has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems       $.ManagedSystems;
+#has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems       $.ManagedSystems;
 #has     Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool  $.PowerEnterprisePool;
-has     Hypervisor::IBM::POWER::HMC::REST::SystemTemplate       $.SystemTemplate;
+#has     Hypervisor::IBM::POWER::HMC::REST::SystemTemplate       $.SystemTemplate;
 #has     Hypervisor::IBM::POWER::HMC::REST::Cluster              $.Cluster;
-has     Hypervisor::IBM::POWER::HMC::REST::Events               $.Events;
+#has     Hypervisor::IBM::POWER::HMC::REST::Events               $.Events;
 
 submethod TWEAK {
     %*ENV<PID-PATH>             = '';
@@ -47,7 +47,7 @@ method init () {
     self.config.diag.post:  self.^name ~ '::' ~ &?ROUTINE.name if %*ENV<HIPH_METHOD>;
     $!options               = Nil;
     $!ManagementConsole     = Hypervisor::IBM::POWER::HMC::REST::ManagementConsole.new(:$!config);
-    $!ManagedSystems        = Hypervisor::IBM::POWER::HMC::REST::ManagedSystems.new(:$!config);
+#   $!ManagedSystems        = Hypervisor::IBM::POWER::HMC::REST::ManagedSystems.new(:$!config);
 #   $!PowerEnterprisePool   = Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool.new(:$!config);
 #
 #   $!SystemTemplate        = Hypervisor::IBM::POWER::HMC::REST::SystemTemplate.new(:$!config);
@@ -65,7 +65,7 @@ method load () {
 # The following cannot be parallelized due to the cummulative %!analysis commit scheme...
 #   $!Events.load;
     $!ManagementConsole.load;
-    $!ManagedSystems.load;
+#   $!ManagedSystems.load;
     $!loaded    = True;
     self.config.optimizations.stash;
     self;
