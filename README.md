@@ -35,7 +35,11 @@ Note
 
 API users must .init() whatever major branches they require:
 
+ - Cluster.init()
+ - Events.init()
  - ManagementConsole.init()
  - ManagedSystems.init()
    - ManagedSystems.LogicalVolumes.init()
    - ManagedSystems.VirtualIOServers.init()
+ - PowerEnterprisePool.init()
+ - SystemTemplate.init()
