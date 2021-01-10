@@ -4,7 +4,7 @@ need    Hypervisor::IBM::POWER::HMC::REST::Config::Dump;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Options;
 use     Hypervisor::IBM::POWER::HMC::REST::Config::Traits;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagementConsole;
-#need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems;
+need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems;
 #need    Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool;
 #
 #need    Hypervisor::IBM::POWER::HMC::REST::SystemTemplate;
@@ -19,7 +19,7 @@ my      Bool                                                    $analyzed = Fals
 my      Lock                                                    $lock = Lock.new;
 
 has     Hypervisor::IBM::POWER::HMC::REST::Config               $.config;
-has     Bool                                                    $.loaded = False;
+#has     Bool                                                    $.loaded = False;
 has     Bool                                                    $.initialized = False;
 has     Hypervisor::IBM::POWER::HMC::REST::Config::Options      $.options;
 has     Hypervisor::IBM::POWER::HMC::REST::ManagementConsole    $.ManagementConsole;
@@ -51,7 +51,7 @@ method init () {
     self.config.diag.post:  self.^name ~ '::' ~ &?ROUTINE.name if %*ENV<HIPH_METHOD>;
     $!options               = Nil;
     $!ManagementConsole     = Hypervisor::IBM::POWER::HMC::REST::ManagementConsole.new(:$!config);
-#   $!ManagedSystems        = Hypervisor::IBM::POWER::HMC::REST::ManagedSystems.new(:$!config);
+    $!ManagedSystems        = Hypervisor::IBM::POWER::HMC::REST::ManagedSystems.new(:$!config);
 #   $!PowerEnterprisePool   = Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool.new(:$!config);
 #
 #   $!SystemTemplate        = Hypervisor::IBM::POWER::HMC::REST::SystemTemplate.new(:$!config);
@@ -62,17 +62,17 @@ method init () {
     self;
 }
 
-method load () {
-    return self if $!loaded;
-    self.init   unless self.initialized;
-    self.config.diag.post: self.^name ~ '::' ~ &?ROUTINE.name if %*ENV<HIPH_METHOD>;
+#method load () {
+#    return self if $!loaded;
+#    self.init   unless self.initialized;
+#    self.config.diag.post: self.^name ~ '::' ~ &?ROUTINE.name if %*ENV<HIPH_METHOD>;
 # The following cannot be parallelized due to the cummulative %!analysis commit scheme...
 #   $!Events.load;
-    $!ManagementConsole.load;
+#    $!ManagementConsole.load;
 #   $!ManagedSystems.load;
-    $!loaded    = True;
-    self;
-}
+#    $!loaded    = True;
+#    self;
+#}
 
 END {
     $self.config.optimizations.stash;
