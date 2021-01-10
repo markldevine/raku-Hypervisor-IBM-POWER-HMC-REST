@@ -29,6 +29,8 @@ has     Hypervisor::IBM::POWER::HMC::REST::ManagementConsole    $.ManagementCons
 #has     Hypervisor::IBM::POWER::HMC::REST::Cluster              $.Cluster;
 #has     Hypervisor::IBM::POWER::HMC::REST::Events               $.Events;
 
+my      $self;
+
 submethod TWEAK {
     %*ENV<PID-PATH>             = '';
     my $proceed-with-analyze    = False;
@@ -38,6 +40,7 @@ submethod TWEAK {
     self.init;
     self.analyze                if $proceed-with-analyze;
     self.config.diag.post: sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'INITIALIZE', sprintf("%.3f", now - $*INIT-INSTANT)) if %*ENV<HIPH_INIT>;
+    $self                       = self;
     self;
 }
 
@@ -68,11 +71,11 @@ method load () {
     $!ManagementConsole.load;
 #   $!ManagedSystems.load;
     $!loaded    = True;
-    self.config.optimizations.stash;
     self;
 }
 
 END {
+    $self.config.optimizations.stash;
     if %*ENV<PID-PATH>:exists {
         if %*ENV<PID-PATH>.IO.f {
             note .exception.message without %*ENV<PID-PATH>.IO.unlink;
