@@ -6,7 +6,6 @@ use     Hypervisor::IBM::POWER::HMC::REST::Config::Traits;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagementConsole;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems;
 #need    Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool;
-#
 #need    Hypervisor::IBM::POWER::HMC::REST::SystemTemplate;
 #need    Hypervisor::IBM::POWER::HMC::REST::Cluster;
 #need    Hypervisor::IBM::POWER::HMC::REST::Events;
@@ -23,7 +22,7 @@ has     Hypervisor::IBM::POWER::HMC::REST::Config               $.config;
 has     Bool                                                    $.initialized = False;
 has     Hypervisor::IBM::POWER::HMC::REST::Config::Options      $.options;
 has     Hypervisor::IBM::POWER::HMC::REST::ManagementConsole    $.ManagementConsole;
-#has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems       $.ManagedSystems;
+has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems       $.ManagedSystems;
 #has     Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool  $.PowerEnterprisePool;
 #has     Hypervisor::IBM::POWER::HMC::REST::SystemTemplate       $.SystemTemplate;
 #has     Hypervisor::IBM::POWER::HMC::REST::Cluster              $.Cluster;
