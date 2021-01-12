@@ -74,11 +74,13 @@ method init () {
 
 END {
     $self.config.optimizations.stash;
-    if %*ENV<PID-PATH>:exists {
-        if %*ENV<PID-PATH>.IO.f {
-            note .exception.message without %*ENV<PID-PATH>.IO.unlink;
+    unless $self.config.options.no-pid {
+        if %*ENV<PID-PATH>:exists {
+            if %*ENV<PID-PATH>.IO.f {
+                note .exception.message without %*ENV<PID-PATH>.IO.unlink;
+            }
+            %*ENV<PID-PATH>:delete;
         }
-        %*ENV<PID-PATH>:delete;
     }
 }
 
