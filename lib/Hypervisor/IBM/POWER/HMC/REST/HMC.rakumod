@@ -2,7 +2,6 @@ need    Hypervisor::IBM::POWER::HMC::REST::Config;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Analyze;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Dump;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Options;
-use     Hypervisor::IBM::POWER::HMC::REST::Config::Traits;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagementConsole;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems;
 #need    Hypervisor::IBM::POWER::HMC::REST::PowerEnterprisePool;
